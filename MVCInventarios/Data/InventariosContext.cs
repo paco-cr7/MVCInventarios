@@ -17,5 +17,19 @@ namespace MVCInventarios.Data
         public DbSet<Departamento> Departamentos {get; set; }
         public DbSet<Marca> Marcas {get; set; }
         public DbSet<Producto> Productos { get; set; }
+        public DbSet<Perfil> Perfiles { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
+
+        //Aqui se le dara el nombre personalizado a las tablas en la base de datos
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Marca>().ToTable("Marca");
+            modelBuilder.Entity<Departamento>().ToTable("Departamento");
+            modelBuilder.Entity<Producto>().ToTable("Producto");
+            modelBuilder.Entity<Perfil>().ToTable("Perfil");
+            modelBuilder.Entity<Usuario>().ToTable("Usuario");
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

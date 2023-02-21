@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AspNetCoreHero.ToastNotification;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MVCInventarios.Data;
 using System.ComponentModel.DataAnnotations;
@@ -9,6 +10,13 @@ builder.Services.AddDbContext<InventariosContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddNotyf(config =>
+{
+    config.DurationInSeconds = 5;
+    config.IsDismissable = true;
+    config.Position = NotyfPosition.BottomRight;
+});
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -31,7 +39,6 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<InventariosContext>();
-    context.Database.EnsureCreated();
     DbInitializer.Initialize(context);
 }
 

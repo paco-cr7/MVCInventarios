@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MVCInventarios.Data;
 using MVCInventarios.Models;
 using MVCInventarios.ViewModels;
@@ -16,30 +18,34 @@ namespace MVCInventarios.Controllers
     {
         private readonly InventariosContext _context;
         private readonly IConfiguration _configuration;
+        private readonly INotyfService _servicioNotificacion;
 
-        public MarcasController(InventariosContext context, IConfiguration configuration)
+        public MarcasController(InventariosContext context, IConfiguration configuration,
+            INotyfService servicioNotificacion)
         {
             _context = context;
             _configuration = configuration;
+            _servicioNotificacion = servicioNotificacion;
         }
 
         // GET: Marcas
-        public async Task<IActionResult> Index(ListadoMarcasViewModel viewModel)
+        public async Task<IActionResult> Index(ListadoViewModel<Marca> viewModel)
         {
             var registrosPorPagina = _configuration.GetValue("RegistrosPorPagina", 5);
 
-            var consulta = _context.Marcas.OrderBy(m => m.Nombre).AsQueryable();
+            var consulta = _context.Marcas.OrderBy(m => m.Nombre).AsQueryable().AsNoTracking();
 
             if (!String.IsNullOrEmpty(viewModel.TerminoBusqueda))
             {
                 consulta = consulta.Where(u => u.Nombre.Contains(viewModel.TerminoBusqueda));
             }
 
+            viewModel.TituloCrear = "Crear Marcas";
             viewModel.Total = consulta.Count();
 
             var numeroPagina = viewModel.Pagina ?? 1;
 
-            viewModel.Marcas = await consulta.ToPagedListAsync(numeroPagina, registrosPorPagina);
+            viewModel.Registros = await consulta.ToPagedListAsync(numeroPagina, registrosPorPagina);
 
 
 
@@ -54,7 +60,7 @@ namespace MVCInventarios.Controllers
                 return NotFound();
             }
 
-            var marca = await _context.Marcas
+            var marca = await _context.Marcas.AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (marca == null)
             {
@@ -83,7 +89,8 @@ namespace MVCInventarios.Controllers
 
                 if (exiteElementoBd)
                 {
-                    ModelState.AddModelError("", "Lo sentimos. Ya existe une lemento con el nombre indicado.");
+                    //ModelState.AddModelError("", "Lo sentimos. Ya existe une lemento con el nombre indicado.");
+                    _servicioNotificacion.Warning("Lo sentimos. Ya existe une lemento con el nombre indicado.");
                     return View(marca);
                 }
 
@@ -91,10 +98,12 @@ namespace MVCInventarios.Controllers
                 {
                     _context.Add(marca);
                     await _context.SaveChangesAsync();
+                    _servicioNotificacion.Success($"Éxito al crear la marca {marca.Nombre}");
                 }
                 catch (DbUpdateException)
                 {
-                    ModelState.AddModelError("","Lo sentimos, ha ocurrido un error. Intente nuevamente");
+                    //ModelState.AddModelError("","Lo sentimos, ha ocurrido un error. Intente nuevamente");
+                    _servicioNotificacion.Warning("Lo sentimos. Ya existe une lemento con el nombre indicado.");
                     return View(marca);
                 }
                 return RedirectToAction(nameof(Index));
@@ -136,7 +145,8 @@ namespace MVCInventarios.Controllers
 
                 if (exiteElementoBd)
                 {
-                    ModelState.AddModelError("", "Lo sentimos. Ya existe une lemento con el nombre indicado.");
+                    //ModelState.AddModelError("", "Lo sentimos. Ya existe une lemento con el nombre indicado.");
+                    _servicioNotificacion.Warning("Lo sentimos. Ya existe une lemento con el nombre indicado.");
                     return View(marca);
                 }
 
@@ -144,6 +154,7 @@ namespace MVCInventarios.Controllers
                 {
                     _context.Update(marca);
                     await _context.SaveChangesAsync();
+                    _servicioNotificacion.Success($"Éxito al actualizar la marca {marca.Nombre}");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -195,6 +206,7 @@ namespace MVCInventarios.Controllers
             }
             
             await _context.SaveChangesAsync();
+            _servicioNotificacion.Success($"Éxito al eliminar la marca {marca.Nombre}");
             return RedirectToAction(nameof(Index));
         }
 

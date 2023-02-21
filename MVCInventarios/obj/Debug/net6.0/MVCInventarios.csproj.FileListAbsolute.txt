@@ -288,3 +288,5 @@ C:\Users\Paco\Documents\GitHub\MVCInventarios\MVCInventarios\bin\Debug\net6.0\Je
 C:\Users\Paco\Documents\GitHub\MVCInventarios\MVCInventarios\bin\Debug\net6.0\X.PagedList.dll
 C:\Users\Paco\Documents\GitHub\MVCInventarios\MVCInventarios\bin\Debug\net6.0\X.PagedList.Mvc.Core.dll
 C:\Users\Paco\Documents\GitHub\MVCInventarios\MVCInventarios\obj\Debug\net6.0\MVCInventarios.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Paco\Documents\GitHub\MVCInventarios\MVCInventarios\bin\Debug\net6.0\AspNetCoreHero.ToastNotification.Views.dll
+C:\Users\Paco\Documents\GitHub\MVCInventarios\MVCInventarios\bin\Debug\net6.0\AspNetCoreHero.ToastNotification.dll
