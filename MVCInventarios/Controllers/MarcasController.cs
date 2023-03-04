@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,8 @@ using X.PagedList;
 
 namespace MVCInventarios.Controllers
 {
+    //[Authorize(Roles = "Administrador,Empleado")]
+    [Authorize(Policy = "EmpleadosEmpresa")]
     public class MarcasController : Controller
     {
         private readonly InventariosContext _context;

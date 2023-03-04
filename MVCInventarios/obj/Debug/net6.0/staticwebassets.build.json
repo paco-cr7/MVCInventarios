@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "s4Uz4HsEjrx6nXgxVQWxIJD2wYbbkd8f9tKI8x7JjH8=",
+  "Hash": "/qwI/SY8+3ZueZuS4Gy2BZuxAHtXBOLubgrFXroXgRo=",
   "Source": "MVCInventarios",
   "BasePath": "_content/MVCInventarios",
   "Mode": "Default",
@@ -151,6 +151,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "C:\\Users\\Paco\\Documents\\GitHub\\MVCInventarios\\MVCInventarios\\wwwroot\\images\\prohibido.png",
+      "SourceId": "MVCInventarios",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\Paco\\Documents\\GitHub\\MVCInventarios\\MVCInventarios\\wwwroot\\",
+      "BasePath": "_content/MVCInventarios",
+      "RelativePath": "images/prohibido.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\images\\prohibido.png"
     },
     {
       "Identity": "C:\\Users\\Paco\\Documents\\GitHub\\MVCInventarios\\MVCInventarios\\wwwroot\\js\\site.js",

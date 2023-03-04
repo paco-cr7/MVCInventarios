@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ using X.PagedList;
 
 namespace MVCInventarios.Controllers
 {
+    //[Authorize(Roles = "Administrador")]
+    [Authorize(Policy = "Administradores")]
     public class DepartamentosController : Controller
     {
         private readonly InventariosContext _context;
@@ -27,6 +30,8 @@ namespace MVCInventarios.Controllers
             _servicioNotificacion = servicioNotificacion;
         }
 
+        //AllowAnonymous sirve para solo darle permiso a todos pero seria a esta vista,osea Index Departamentos
+        [AllowAnonymous]
         // GET: Departamentos
         public async Task<IActionResult> Index(ListadoViewModel<Departamento> viewModel)
         {

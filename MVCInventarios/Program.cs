@@ -1,7 +1,11 @@
 ﻿using AspNetCoreHero.ToastNotification;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MVCInventarios.Data;
+using MVCInventarios.Helpers;
+using MVCInventarios.Models;
 using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,12 +15,33 @@ builder.Services.AddDbContext<InventariosContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.HttpOnly = true;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/AccesoDenegado";
+        options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Administradores", policy => policy.RequireRole("Administrador"));
+    options.AddPolicy("EmpleadosEmpresa", policy => policy.RequireRole("Administrador", "Empleado"));
+    options.AddPolicy("Organizacion", policy => policy.RequireRole("Administrador", "Empleado", "Servicio Social"));
+});
+
 builder.Services.AddNotyf(config =>
 {
     config.DurationInSeconds = 5;
     config.IsDismissable = true;
     config.Position = NotyfPosition.BottomRight;
 });
+
+builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
+builder.Services.AddSingleton<UsuarioFactoria>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -46,6 +71,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

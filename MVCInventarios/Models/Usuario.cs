@@ -17,6 +17,7 @@ namespace MVCInventarios.Models
         public string Username { get; set; }
         public string Contrasena { get; set; }
         [Required(ErrorMessage = "El correo electrónico es obligatorio")]
+        [DataType(DataType.EmailAddress)]
         public string CorreoElectronico { get; set; }
         public string Celular { get; set; }
         [Required(ErrorMessage = "El perfil del usuario es obligatorio")]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AspNetCoreHero.ToastNotification.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ using X.PagedList;
 
 namespace MVCInventarios.Controllers
 {
+    //[Authorize(Roles = "Administrador,Empleado,Servicio Social")]
+    [Authorize(Policy = "Organizacion")]
     public class ProductosController : Controller
     {
         private readonly InventariosContext _context;
@@ -64,6 +67,7 @@ namespace MVCInventarios.Controllers
             var producto = await _context.Productos
                 .Include(p => p.Marca).AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (producto == null)
             {
                 return NotFound();
