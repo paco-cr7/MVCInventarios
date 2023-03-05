@@ -36,5 +36,7 @@ namespace MVCInventarios.ViewModels
         [Required(ErrorMessage = "El perfil del usuario es obligatorio")]
         [Display(Name = "Perfil")]
         public int PerfilId { get; set; }
+        [Display(Name = "Foto")]
+        public byte[] Foto { get; set; }
     }
 }

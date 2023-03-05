@@ -45,7 +45,8 @@ namespace MVCInventarios.Helpers
                 CorreoElectronico = usuario.CorreoElectronico,
                 Nombre = usuario.Nombre,
                 PerfilId = usuario.PerfilId,
-                Username = usuario.Username
+                Username = usuario.Username,
+                Foto = usuario.Foto
             };
         }
         public UsuarioEdicionDto CrearUsuarioEdicion(Usuario usuario)
@@ -58,7 +59,8 @@ namespace MVCInventarios.Helpers
                 CorreoElectronico = usuario.CorreoElectronico,
                 Nombre = usuario.Nombre,
                 PerfilId = usuario.PerfilId,
-                Username = usuario.Username
+                Username = usuario.Username,
+                Foto = usuario.Foto
             };
         }
 

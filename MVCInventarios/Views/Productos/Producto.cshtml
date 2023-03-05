@@ -6,9 +6,10 @@
 
 <h4>@ViewData["Title"]</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="@(Model.Producto.Id > 0 ? "Edit" : "Create")"><!--Aqui se decide si se llama a Editar o Crear-->
+<form asp-action="@(Model.Producto.Id > 0 ? "Edit" : "Create")" enctype="multipart/form-data">
+    <!--Aqui se decide si se llama a Editar o Crear-->
+    <div class="row">
+        <div class="col-md-6">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             @if(Model.Producto.Id > 0)
             {
@@ -63,9 +64,31 @@
                     <partial name="Acciones/_Create" />
                 }
             </div>
-        </form>
+        </div>
+        @* Implementación Imagen *@
+        <div class="col-md-6">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Producto.Imagen" style="width: 100%;"></label>
+                @if (Model.Producto.Imagen != null)
+                {
+                    <img id="foto" class="img-fluid" src="data:image/*;base64,@(Convert.ToBase64String(Model.Producto.Imagen))">
+                }
+                else
+                {
+                    <img id="foto" class="img-fluid" src="">
+                }
+                <input type="file"
+                       accept=".png,.jpg,.jpeg,.gif,.tif"
+                       asp-for="Producto.Imagen"
+                       class="form-control"
+                       onchange="document.getElementById('foto').src = window.URL.createObjectURL(this.files[0])" />
+                <span asp-validation-for="Producto.Imagen" class="text-danger"></span>
+            </div>
+        </div>
+        @* Implementación Imagen *@
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{

@@ -9,9 +9,9 @@
 
 <h4>@ViewData["Title"]</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+<form asp-action="Edit" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-6">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Usuario.Id" />
             <div class="form-group">
@@ -54,9 +54,31 @@
             <div class="form-group mt-3">
                 <partial name="Acciones/_Edit" />
             </div>
-        </form>
+        </div>
+        @* Implementación Imagen *@
+        <div class="col-md-6">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Usuario.Foto" style="width: 100%;"></label>
+                @if (Model.Usuario.Foto != null)
+                {
+                    <img id="foto" class="img-fluid" src="data:image/*;base64,@(Convert.ToBase64String(Model.Usuario.Foto))">
+                }
+                else
+                {
+                    <img id="foto" class="img-fluid" src="">
+                }
+                <input type="file"
+                       accept=".png,.jpg,.jpeg,.gif,.tif"
+                       asp-for="Usuario.Foto"
+                       class="form-control"
+                       onchange="document.getElementById('foto').src = window.URL.createObjectURL(this.files[0])" />
+                <span asp-validation-for="Usuario.Foto" class="text-danger"></span>
+            </div>
+        </div>
+        @* Implementación Imagen *@
     </div>
-</div>
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

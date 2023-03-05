@@ -42,6 +42,7 @@ builder.Services.AddNotyf(config =>
 
 builder.Services.AddSingleton<IPasswordHasher<Usuario>, PasswordHasher<Usuario>>();
 builder.Services.AddSingleton<UsuarioFactoria>();
+builder.Services.AddSingleton<ProductoFactoria>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

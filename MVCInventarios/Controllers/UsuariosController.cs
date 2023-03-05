@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AspNetCore;
 using AspNetCoreHero.ToastNotification.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -91,7 +92,7 @@ namespace MVCInventarios.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nombre,Apellidos,Username,Contrasena,ConfirmarContrasena,CorreoElectronico,Celular,PerfilId")] UsuarioRegistroDto usuario)
+        public async Task<IActionResult> Create([Bind("Nombre,Apellidos,Username,Contrasena,ConfirmarContrasena,CorreoElectronico,Celular,PerfilId,Foto")] UsuarioRegistroDto usuario)
         {
             AgregarUsuarioViewModel viewModel = new AgregarUsuarioViewModel();
             viewModel.ListadoPerfiles = new SelectList(_context.Perfiles.AsNoTracking(), "Id", "Nombre");
@@ -112,6 +113,15 @@ namespace MVCInventarios.Controllers
                 try
                 {
                     var usuarioAgregar = _usuarioFactoria.CrearUsuario(usuario);
+
+                    //Si se trae un archivo, se extraera
+                    if(Request.Form.Files.Count > 0)
+                    {
+                        IFormFile archivo = Request.Form.Files.FirstOrDefault();
+                        using var dataStream = new MemoryStream();
+                        await archivo.CopyToAsync(dataStream);
+                        usuarioAgregar.Foto = dataStream.ToArray();
+                    }
                     _context.Usuarios.Add(usuarioAgregar);
                     await _context.SaveChangesAsync();
                     _servicioNotificacion.Success($"Éxito al crear el usuario {usuario.Username}");
@@ -153,7 +163,7 @@ namespace MVCInventarios.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Apellidos,Username,CorreoElectronico,Celular,PerfilId")] UsuarioEdicionDto usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Apellidos,Username,CorreoElectronico,Celular,PerfilId,Foto")] UsuarioEdicionDto usuario)
         {
             EditarUsuarioViewModel viewModel = new EditarUsuarioViewModel();
             viewModel.ListadoPerfiles = new SelectList(_context.Perfiles.AsNoTracking(), "Id", "Nombre");
@@ -170,6 +180,16 @@ namespace MVCInventarios.Controllers
                 {
                     var usuarioBd = await _context.Usuarios.FindAsync(usuario.Id);
                     _usuarioFactoria.ActualizarDatosUsuario(usuario, usuarioBd);
+
+                    //Si se trae un archivo, se extraera
+                    if (Request.Form.Files.Count > 0)
+                    {
+                        IFormFile archivo = Request.Form.Files.FirstOrDefault();
+                        using var dataStream = new MemoryStream();
+                        await archivo.CopyToAsync(dataStream);
+                        usuarioBd.Foto = dataStream.ToArray();
+                    }
+
                     await _context.SaveChangesAsync();
                     _servicioNotificacion.Success($"Éxito al actualizar el usuario {usuario.Username}");
                 }

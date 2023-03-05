@@ -101,6 +101,9 @@ namespace MVCInventarios.Migrations
                     b.Property<int>("Estatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("Imagen")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("MarcaId")
                         .HasColumnType("int");
 
@@ -137,6 +140,9 @@ namespace MVCInventarios.Migrations
                     b.Property<string>("CorreoElectronico")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("Foto")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()

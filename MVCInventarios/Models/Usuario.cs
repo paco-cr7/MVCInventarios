@@ -24,6 +24,7 @@ namespace MVCInventarios.Models
         [Display(Name ="Perfil")]
         public int PerfilId { get; set; }
         public Perfil Perfil { get; set; }
+        public byte[] Foto { get; set; }
 
     }
 }

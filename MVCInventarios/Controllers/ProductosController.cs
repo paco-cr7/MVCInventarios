@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVCInventarios.Data;
+using MVCInventarios.Helpers;
 using MVCInventarios.Models;
 using MVCInventarios.ViewModels;
 using X.PagedList;
@@ -21,13 +22,15 @@ namespace MVCInventarios.Controllers
         private readonly InventariosContext _context;
         private readonly IConfiguration _configuration;
         private readonly INotyfService _servicioNotificacion;
+        private readonly ProductoFactoria _productoFactoria;
 
         public ProductosController(InventariosContext context, IConfiguration configuration,
-            INotyfService servicioNotificacion)
+            INotyfService servicioNotificacion, ProductoFactoria productoFactoria)
         {
             _context = context;
             _configuration = configuration;
             _servicioNotificacion = servicioNotificacion;
+            _productoFactoria = productoFactoria;
         }
 
         // GET: Productos
@@ -89,7 +92,7 @@ namespace MVCInventarios.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Nombre,Descripcion,MarcaId,Costo,Estatus")] Producto producto)
+        public async Task<IActionResult> Create([Bind("Nombre,Descripcion,MarcaId,Costo,Estatus,Imagen")] ProductoCreacionEdicionDto producto)
         {
             AgregarEditarProductoViewModel viewModel = new AgregarEditarProductoViewModel();
             viewModel.ListadoMarcas = new SelectList(_context.Marcas.AsNoTracking(), "Id", "Nombre", producto.MarcaId);
@@ -108,6 +111,16 @@ namespace MVCInventarios.Controllers
 
                 try
                 {
+                    var nuevoProducto = _productoFactoria.CrearProducto(producto);
+
+                    //Se evelua si el clinete envio un archivo
+                    if (Request.Form.Files.Count > 0)
+                    {
+                        IFormFile archivo = Request.Form.Files.FirstOrDefault();
+                        nuevoProducto.Imagen = await Utilerias.LeerImagen(archivo);
+                    }
+
+
                     _context.Add(producto);
                     await _context.SaveChangesAsync();
                     _servicioNotificacion.Success($"Éxito al crear el producto {producto.Nombre}");
@@ -139,7 +152,12 @@ namespace MVCInventarios.Controllers
 
             AgregarEditarProductoViewModel viewModel = new AgregarEditarProductoViewModel();
             viewModel.ListadoMarcas = new SelectList(_context.Marcas.AsNoTracking() ,"Id" , "Nombre", producto.MarcaId);
-            viewModel.Producto = producto;
+            viewModel.Producto = _productoFactoria.CrearProducto(producto);
+
+            if(String.IsNullOrEmpty(producto.Imagen))
+            {
+                viewModel.Producto.Imagen = await Utilerias.ConvertirImagenABytes(producto.Imagen);
+            }
             return View("Producto", viewModel);
         }
 
@@ -148,7 +166,7 @@ namespace MVCInventarios.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Descripcion,MarcaId,Costo,Estatus")] Producto producto)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Descripcion,MarcaId,Costo,Estatus,Imagen")] ProductoCreacionEdicionDto producto)
         {
             AgregarEditarProductoViewModel viewModel = new AgregarEditarProductoViewModel();
             viewModel.ListadoMarcas = new SelectList(_context.Marcas.AsNoTracking(), "Id", "Nombre", producto.MarcaId);
@@ -172,6 +190,18 @@ namespace MVCInventarios.Controllers
 
                 try
                 {
+                    var productoBd = await _context.Productos.FindAsync(producto.Id);
+
+                    _productoFactoria.ActualizarDatosProducto(producto, productoBd);
+
+                    //Se evelua si el clinete envio un archivo
+                    if (Request.Form.Files.Count > 0)
+                    {
+                        IFormFile archivo = Request.Form.Files.FirstOrDefault();
+                        productoBd.Imagen = await Utilerias.LeerImagen(archivo);
+                    }
+
+
                     _context.Update(producto);
                     await _context.SaveChangesAsync();
                     _servicioNotificacion.Success($"Éxito al actualizar el producto {producto.Nombre}");

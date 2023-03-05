@@ -31,5 +31,7 @@ namespace MVCInventarios.Models
         [Display(Name = "Estatus")]
         [Required(ErrorMessage = "El estatus del producto es obligatorio.")]
         public EstatusProducto Estatus { get; set; } = EstatusProducto.Activo;
+
+        public string Imagen { get; set; }
     }
 }
